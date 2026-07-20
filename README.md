@@ -32,4 +32,3 @@ This repository is a collection of AI engineering projects, experiments, and lea
 | **PostgreSQL** | 🟡 Planned | Database for production apps |
 | **Docker** | 🟡 Planned | Containerization |
 
-## 📁 Repository Structure
