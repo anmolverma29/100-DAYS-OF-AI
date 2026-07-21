@@ -8,12 +8,11 @@ client=genai.Client(
     api_key=os.getenv("GEMINI_API_KEY")
 )
 
+while True:
+    prompt=input("Enter your prompt: ")
+    response=client.models.generate_content(
+            model="gemini-2.5-flash",
+            contents=prompt
+        )
 
-prompt="explain AI in simple terms to me"
-
-response=client.models.generate_content(
-    model="gemini-2.5-flash",
-    contents=prompt
-)
-
-print(response.text)
+    print(response.text)
