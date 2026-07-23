@@ -3,6 +3,7 @@ from dotenv import load_dotenv
 import os
 import time
 from datetime import datetime
+import random
 
 #Load envirnment variable
 #gemini api key from .env file
@@ -38,48 +39,59 @@ print("="*50)
 def datetime_now():
     return datetime.now().strftime("%I:%M:%S, %p")
 
+#tool which returns a random motivational quote if asked by user
+def motivational_quote():
+    quotes = [
+        "Believe you can and you're halfway there. - Theodore Roosevelt",
+        "The only way to do great work is to love what you do. - Steve Jobs",
+        "Success is not final, failure is not fatal: It is the courage to continue that counts. - Winston Churchill",
+        "Don't watch the clock; do what it does. Keep going. - Sam Levenson",
+        "The future belongs to those who believe in the beauty of their dreams. - Eleanor Roosevelt"
+    ]
+    return random.choice(quotes)
+
+#calculator tool
+def calculator(expression):
+    try:
+        result=eval(expression)
+        return result
+    except Exception as e:
+        return "Invalid Expression"
+
+#based on user query, route to the appropriate tool or return "gemini" to use the gemini model
+def route_tool(query):
+    query=query.lower()
+    if "time" in query:
+        return "time"
+    elif "calculator" in query:
+        return "calculator"
+    elif "quote" in query or "motivation" in query:
+        return "quote"
+    return "gemini"
 
 
-
-
-
+#user input loop
 while True:
     user_input=input("prompt:")
     if user_input.lower() in ["exit","quit","bye"]:
         break
-    #store user message here
-    history.append(f"User: {user_input}")
-
-    if len(history)> Max_history:
-        history=history[-Max_history]
-    
-    #conversattion context
-    conversation_context = system_prompt + "\n"
-    conversation_context += "\n".join(history)
-
-    start_time=time.time()
-    full_response=""
-    
-    try:
-        #call gemini model
-
-        stream=client.models.generate_content_stream(
+    tool=route_tool(user_input)
+    if tool=="time":
+        result=datetime_now()
+        print(f"Current time: {result}")
+    elif tool =="calculator":
+        expression=(user_input.replace("calculate","").strip())
+        result=calculator(expression)
+        print(f"Result: {result}")
+    elif tool =="quote":
+        result=motivational_quote()
+        print(f"Motivational Quote: {result}")
+    else:
+        response=client.models.generate_content(
             model="gemini-2.5-flash",
-            contents=conversation_context
-        )
-        for chunk in stream:
-            if chunk.text:
-                print(chunk.text,end="",flush=True)
-                full_response+=chunk.text
-        
-        end_time=time.time()
-        total_time=end_time-start_time
-        print(f"\nTime taken for response: [{total_time} seconds]")
-       
-        # store bot response
-        history.append(f'Assistant: {full_response}')
-    except Exception as e:
-        print(f"error:{e}")
-        continue
+            contents=user_input
+            )
+        print(f"Gemini Response: {response.text}")
 
 
+   
