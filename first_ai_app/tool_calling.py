@@ -1,3 +1,5 @@
+#here we learn about the fundamentals of tool calling in gemini api. we will create a simple chatbot which can call some tools based on user query and if no tool is found, it will use the gemini model to generate response.
+
 from google import genai
 from dotenv import load_dotenv
 import os
